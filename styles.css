@@ -1,0 +1,109 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+
+    background: linear-gradient(to right, #cec7bd, #cabfab);
+    font-family: Arial, sans-serif;
+}
+
+#calculator-container {
+    border: 3px solid black;
+    border-radius: 1px 1px 10px 10px;
+    display: flex;
+    flex-direction: column;
+    width: 35em;
+
+    background: linear-gradient(45deg, #414b66, #06234f);
+    box-shadow: 5px -1px 10px 3px #6b5e4b;
+}
+
+#display-container {
+    display: flex;
+    justify-content: center;
+    height: 6em;
+    margin-top: 2em;
+}
+
+#display-frame {
+    border: 2px solid black;
+    border-radius: 1px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 80%;
+    background-color: #6e6a5e;
+    margin: 1em 0;
+    box-shadow: 1px 0px 1px 1px inset #2d3439;
+
+}
+
+#display-box {
+    border: 1px solid black;
+    border-radius: 5px;
+    box-shadow: 1px 0px 1px 1px inset #26210e;
+    width: 95%;
+    height: 80%;
+    font-family: 'VT323', monospace;
+    font-size: 4em;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 0 .2em;
+    background-color: #6c6b4c;
+    color: #060200;
+    letter-spacing: .075em;
+}
+
+#header {
+    display: flex;
+    justify-content: space-around;
+    margin: .25em 0 .5em 2em;
+    color: #bcbfb8;
+}
+
+h1 {
+    font-size: 1.4em;
+}
+
+h2 {
+    font-size: 2.3em;
+    font-weight: 600;
+}
+
+button {
+    height: 2em;
+    width: 3em;
+    margin: .5em .3em;
+    font-size: 2em;
+    font-weight: 600;
+    background-color: #d2cbb1;
+    color: #06234f;
+    box-shadow: 2px -1px 5px 1px #120d12;
+    border: 2px solid black;
+    cursor: pointer;
+    transition: 0.2s all;
+}
+
+button:active {
+    transform: scale(0.98);
+    box-shadow: 1px 0px 3px 0px #120d12;
+}
+
+.red-button {
+    background: linear-gradient(45deg, #973e2e, #992a1f);
+    color: #ffdad0;
+}
+
+#button-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2em;
+}
+
+#right-buttons {
+    display: flex;
+    flex-direction: column;
+    margin-left: 2em;
+}
