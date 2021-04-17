@@ -29,62 +29,76 @@ function operate(operator, num1, num2) {
     }
 }
 
+const display = document.querySelector('#display-box');
+const numberButtons = document.querySelectorAll('.numbers');
+const operatorButtons = document.querySelectorAll('.operations');
+const equals = document.querySelector('#equals');
+const clear = document.querySelector('#clear');
+
 function main() {
     // global variables
-    let displayVar;
-    let secondVar;
-    let operator;
-    let result;
+    let dataObj = {};
 
-    displayNumbers(displayVar, secondVar, operator);
+    displayNumbers(dataObj);
+    setClear(dataObj);
+    setOperators(dataObj);
+    setEquals(dataObj);
+}
+
+function setClear(obj) {
+    clear.addEventListener('click', () => {
+    obj.displayVar = null;
+    obj.firstVar = null;
+    obj.secondVar = null;
+    obj.operator = null;
+    obj.result = null;
+    display.textContent = null;
+    console.log(obj);
+    });
 }
 
 
-function displayNumbers(displayVar, secondVar, operator) {
-    const numberButtons = document.querySelectorAll('.numbers');
+function displayNumbers(obj) {
+    console.log(obj);
     numberButtons.forEach(button => button.addEventListener('click', function(e) { 
         const clickedNumber = e.target.id;
-        const display = document.querySelector('#display-box');
         if (display.textContent.length < 13) {
             display.textContent += clickedNumber;
-            if (!displayVar) {
-                displayVar = parseInt(display.textContent);
-                setOperators(displayVar, secondVar, operator);
+            if (!obj.operator) {
+                obj.displayVar = parseInt(display.textContent);
+                console.log(obj)
             } else {
-                
-                secondVar = display.textContent;
+                obj.secondVar = parseInt(display.textContent);
             }
         }
     }));
 }
 
-function setOperators(displayVar, secondVar, operator) {
-    const operatorButtons = document.querySelectorAll('.operations');
+function setOperators(obj) {
     operatorButtons.forEach(button => button.addEventListener('click', function(e) {
-        operator = e.target.id;
-        console.log(operator, displayVar);
-        if (!displayVar) {
+        obj.operator = e.target.id;
+        console.log(obj);
+        if (!obj.displayVar) {
             return;
         } else {
-            console.log(displayVar, secondVar, operator);
-            document.querySelector('#display-box').textContent = '';
-            setEquals(displayVar, secondVar, operator);
+            console.log(obj);
+            display.textContent = '';
         }
-    }))
+    }));
 }
 
-function setEquals(displayVar, secondVar, operator) {
-    document.querySelector('#equals').addEventListener('click', function(e) {
-        const display = document.querySelector('#display-box');
-        if (!secondVar) {
-            secondVar = parseInt(display.textContent);
+function setEquals(obj) {
+    equals.addEventListener('click', function(e) {
+        if (!obj.secondVar) {
+            obj.secondVar = parseInt(display.textContent);
+            console.log(obj.secondVar);
         }
-        console.log(displayVar, secondVar, operator);
-        let result = operate(operator, displayVar, secondVar);
-        display.textContent = result;
-        displayVar = result;
-
-    })
+        console.log(obj);
+        obj.result = operate(obj.operator, obj.displayVar, obj.secondVar);
+        console.log(obj.result);
+        display.textContent = obj.result;
+        obj.displayVar = obj.result;
+    });
     
 }
 
