@@ -36,56 +36,49 @@ function operate(operator, num1, num2) {
             result = null;
             break;
     }
-    let resultString = result.toString();
-    if ( resultString.length > 13) {
-        if(!resultString.includes('.')) {
-            return "Error";
-        } else {
-            let splitNumbers = resultString.split('.')
-            console.log(splitNumbers)
-            if (splitNumbers[0].length > 12) {
-                return "Error";
-            } else {
-                let decimalPlaces = 12 - splitNumbers[0].length;
-                console.log(decimalPlaces);
-                console.log(result, typeof result)
-                return result.toFixed(decimalPlaces);
-            }
-        }
+    if (result.toString().length > 13) { //only 13 characters
+        result = roundFloat(result)
     }
     return result;
 }
 
-
-function main() {
-    // global object variable
-    let dataObj = {};
-
-    displayNumbers(dataObj);
-    setClear(dataObj);
-    setOperators(dataObj);
-    setEquals(dataObj);
+function roundFloat(number) {
+    let numberString = number.toString();
+    if(!numberString.includes('.')) {
+        return "Error";
+    } else {
+        let splitNumbers = numberString.split('.')
+        console.log(splitNumbers)
+        if (splitNumbers[0].length > 12) { // 12 bc decimal takes up a character
+            return "Error";
+        } else {
+            let decimalPlaces = 12 - splitNumbers[0].length;
+            console.log(decimalPlaces);
+            console.log(number, typeof number)
+            return number.toFixed(decimalPlaces);
+        }
+    }
 }
 
 function setClear(obj) {
+    const clear = document.querySelector('#clear');
     clear.addEventListener('click', () => {
-    obj.displayVar = null;
-    obj.secondVar = null;
-    obj.operator = null;
-    obj.result = null;
-    display.textContent = null;
-    console.log(obj);
+        obj.displayVar = null;
+        obj.secondVar = null;
+        obj.operator = null;
+        obj.result = null;
+        display.textContent = null;
+        console.log(obj);
     });
 }
 
-
-function displayNumbers(obj) {
+function setDecimal(obj) {
     const decimalButton = document.querySelector('#decimal');
     decimalButton.addEventListener('click', function(e) {
         if (display.textContent.length < 13 && !display.textContent.includes('.')
-            && !obj.result) {
+            && obj.result == null) {
             display.textContent += '.';
-            if (!obj.displayVar) {
+            if (obj.displayVar == null) {
                 obj.displayVar = parseFloat(display.textContent);
                 console.log(obj);
             } else {
@@ -94,27 +87,29 @@ function displayNumbers(obj) {
             }
         }
     });
+}
+
+function displayNumbers(obj) {
     console.log(obj);
+    const numberButtons = document.querySelectorAll('.numbers');
     numberButtons.forEach(button => button.addEventListener('click', function(e) { 
         const clickedNumber = e.target.id;
-        //if (display.textContent == "Error") {
-            //display.textContent = '';
-        if (obj.result == "Error") {
+        if (obj.result == "Error") { // deactivate buttons when error message
             return;
         }
-        if (!obj.result) {
+        if (obj.result == null) { // starting fresh
             if (display.textContent.length < 13) {
                 display.textContent += clickedNumber;
-                if (!obj.operator) {
+                if (!obj.operator) { // continue storing number 1
                     obj.displayVar = parseFloat(display.textContent);
                     console.log(obj)
-                } else {
+                } else { // if there's an operater, ready for number 2
                     obj.secondVar = parseFloat(display.textContent);
                     console.log(obj);
                 }
             }
-        } else {
-            display.textContent = '';
+        } else { // if there's a result, it's number 1, and we need number 2
+            display.textContent = null;
             obj.result = null;
             display.textContent += clickedNumber;
             obj.secondVar = parseFloat(display.textContent);
@@ -124,27 +119,32 @@ function displayNumbers(obj) {
 }
 
 function setOperators(obj) {
+    const operatorButtons = document.querySelectorAll('.operations');
     operatorButtons.forEach(button => button.addEventListener('click', function(e) {
-        if (obj.result == "Error") {
+        if (obj.result == "Error" || obj.displayVar == null) { // ignore if no numbers
             return;
         } else if (obj.result) {
             obj.operator = e.target.id;
             obj.displayVar = parseFloat(obj.result);
             obj.result = null;
             obj.secondVar = null;
-            display.textContent = '';
+            display.textContent = null;
             console.log(obj);
         } else if (!obj.operator) {
             obj.operator = e.target.id;
             console.log(obj);
-            if (!obj.displayVar) {
+            if (obj.displayVar == null) {
+                display.textContent = null;
                 return;
             } else {
                 console.log(obj);
-                display.textContent = '';
+                display.textContent = null;
             }
         } else {
-            obj.result = operate(obj.operator, obj.displayVar, obj.secondVar);
+            obj.result = parseFloat(operate(obj.operator, obj.displayVar, obj.secondVar));
+            if (isNaN(obj.result)) {
+                obj.result = "Error";
+            }
             display.textContent = obj.result;
             obj.displayVar = obj.result;
             obj.operator = e.target.id;
@@ -155,23 +155,27 @@ function setOperators(obj) {
 }
 
 function setEquals(obj) {
+    const equals = document.querySelector('#equals');
     equals.addEventListener('click', function(e) {
-        if (obj.result == "Error") {
+        if (obj.result == "Error" || obj.displayVar == null) { // ignore if no numbers
             return;
-        } else if (!obj.secondVar && !obj.result) {
+        } else if (obj.secondVar == null && obj.result == null) {
             display.textContent = "Error";
             obj.result = "Error";
             obj.displayVar = null;
             obj.operator = null;
             console.log(obj);
             return;
-        } else if (!obj.secondVar) {
+        } else if (obj.secondVar == null) {
             obj.secondVar = parseFloat(display.textContent);
             console.log(obj.secondVar);
         }
         console.log(obj);
         let operationResult = operate(obj.operator, obj.displayVar, obj.secondVar);
         obj.result = parseFloat(operationResult);
+        if (isNaN(obj.result)) {
+            obj.result = "Error";
+        }
         console.log(obj);
         display.textContent = obj.result.toString();
         obj.displayVar = parseFloat(obj.result);
@@ -180,9 +184,10 @@ function setEquals(obj) {
 }
 
 const display = document.querySelector('#display-box');
-const numberButtons = document.querySelectorAll('.numbers');
-const operatorButtons = document.querySelectorAll('.operations');
-const equals = document.querySelector('#equals');
-const clear = document.querySelector('#clear');
+const dataObj = {};
 
-main();
+displayNumbers(dataObj);
+setClear(dataObj);
+setOperators(dataObj);
+setEquals(dataObj);
+setDecimal(dataObj);
