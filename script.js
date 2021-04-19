@@ -52,7 +52,7 @@ function roundFloat(number) {
         if (splitNumbers[0].length > 12) { // 12 bc decimal takes up a character
             return "Error";
         } else {
-            let decimalPlaces = 12 - splitNumbers[0].length;
+            let decimalPlaces = 6 - splitNumbers[0].length;
             console.log(decimalPlaces);
             console.log(number, typeof number)
             return number.toFixed(decimalPlaces);
@@ -63,6 +63,22 @@ function roundFloat(number) {
 const dataObj = {};
 const display = document.querySelector('#display-box');
 
+function setClear(obj) {
+    const clearButton = document.querySelector('#clear');
+    clearButton.addEventListener('click', function() {
+        clearData(obj);
+    })
+}
+
+function clearData(obj) {
+    obj.val1 = null;
+    obj.val2 = null;
+    obj.operator = null;
+    obj.result = false;
+    display.textContent = '';
+    console.log(obj);
+}
+
 function setNumbers(obj) {
     const numberButtons = document.querySelectorAll('.numbers');
     numberButtons.forEach(button => button.addEventListener('click', function(e) {
@@ -71,8 +87,20 @@ function setNumbers(obj) {
 }
 
 function displayNumber(e, obj) {
+    if (obj.result === true && obj.continue !== true) { // clear display if displaying result
+        clearData(obj); // and clear values from memory
+        display.textContent = e.target.id;
+        console.log(obj);
+        return;
+    }
+    if (obj.continue === true) {
+        display.textContent = e.target.id;
+        console.log(obj);
+        return;
+    }
     if (display.textContent.length < 13) { // permit up to 13 characters on display
         display.textContent += e.target.id;
+        console.log(obj);
     }
 }
 
@@ -87,7 +115,17 @@ function setOperators(obj) {
 }
 
 function readyOperator(e, obj) {
-    obj.val1 = parseFloat(display.textContent);
+    if (obj.val1) {
+        obj.val2 = parseFloat(display.textContent);
+        readyOperation(obj);
+        console.log(obj);
+        obj.operator = e.target.id;
+        obj.val2 = null;
+        obj.continue = true;
+        return;
+    } else {
+        obj.val1 = parseFloat(display.textContent);
+    }
     obj.operator = e.target.id;
     display.textContent = null;
     console.log(obj);
@@ -95,26 +133,28 @@ function readyOperator(e, obj) {
 
 function setEquals(obj) {
     const equals = document.querySelector('#equals');
-    equals.addEventListener('click', function(e) {
+    equals.addEventListener('click', function() {
         if (obj.val1 != null && obj.operator != null) { // permit click only when val1 & operator present
-            readyOperation(e, obj);
+            readyOperation(obj);
         }
     });
 }
 
-function readyOperation(e, obj) {
+function readyOperation(obj) {
     if (obj.val2 == null) { // grab val2 from disply if there isn't one already stored
     obj.val2 = parseFloat(display.textContent);
     }
-    let result = operate(obj.operator, obj.val1, obj.val2)
+    let result = parseFloat(operate(obj.operator, obj.val1, obj.val2)) // why do I sometimes get a string?
     display.textContent = result;
     obj.val1 = result;
+    obj.result = true; // true = calculator is displaying result
     console.log(obj);
 }
 
 setNumbers(dataObj);
 setOperators(dataObj);
 setEquals(dataObj);
+setClear(dataObj);
 
 /*
 function setClear(obj) {
