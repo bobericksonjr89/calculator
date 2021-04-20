@@ -89,16 +89,38 @@ function setNumbers(obj) {
         }
         displayNumber(e, obj);
     }));
+
+    const decimalButton = document.querySelector('#decimal');
+    decimalButton.addEventListener('click', function(e) {
+        if (display.textContent.length < 13 && !display.textContent.includes('.')) {
+            if (obj.isEqualsClicked === true) {
+                clearData(obj); // and clear values from memory
+                display.textContent = '.';
+                obj.isEqualsClicked = false;
+                obj.isDisplayingResult = false;
+                console.log(obj);
+                return;
+            } else if (obj.isDisplayingResult) {
+                display.textContent = '';
+                obj.isEqualsClicked = false;
+                obj.isDisplayingResult = false;
+            }
+            display.textContent += '.';
+        }
+    });
 }
 
 function displayNumber(e, obj) {
      if (obj.isEqualsClicked === true) { // clear display if displaying result
         clearData(obj); // and clear values from memory
         display.textContent = e.target.id;
+        obj.isEqualsClicked = false;
+        obj.isDisplayingResult = false;
         console.log(obj);
         return;
     } else if (obj.isDisplayingResult) {
         display.textContent = '';
+        obj.isDisplayingResult = false;
     }
 /*    if (obj.continue === true) {
         display.textContent = e.target.id;
@@ -137,14 +159,9 @@ function setOperators(obj) {
             obj.val2 = null;
             obj.operator = e.target.id;
             obj.isEqualsClicked = false;
+            obj.isDisplayingResult = false;
             console.log(obj);
-        } 
-
-            //we'll always clear the display after operator clicked
-            //and we'll store current value into val1 if not doing consecutive operations
-            //if equals hasn't been clicked yet.
-            //readyOperator(e, obj);
-        
+        }    
     }));
 }
 /*
@@ -188,13 +205,24 @@ function readyOperator(e, obj) {
 function setEquals(obj) {
     const equals = document.querySelector('#equals');
     equals.addEventListener('click', function() {
-        if (display.textContent === "Error" || display.textContent == '' || !obj.val2) {
+        if (display.textContent === "Error" || display.textContent == '' || !obj.val1 || !obj.operator) {
             return;
-        } //else if (obj.val1 != null && obj.operator != null) { // permit click only when val1 & operator present
+        } else if (!obj.isEqualsClicked) {
+            obj.val2 = parseFloat(display.textContent);
+            display.textContent = parseFloat(operate(obj.operator, obj.val1, obj.val2));
+            obj.isEqualsClicked = true;
+            obj.isDisplayingResult = true;
+            obj.val1 = parseFloat(display.textContent);
+            console.log(obj);
+            // permit click only when val1 & operator present
             //obj.hitEquals = true;
             //readyOperation(obj);
             //obj.continue = false;
-        //}
+        } else {
+            display.textContent = parseFloat(operate(obj.operator, obj.val1, obj.val2));
+            obj.val1 = parseFloat(display.textContent);
+            console.log(obj);
+        }
     });
 }
 /*
@@ -216,7 +244,7 @@ function readyOperation(obj) {
 
 setNumbers(dataObj);
 setOperators(dataObj);
-//setEquals(dataObj);
+setEquals(dataObj);
 setClear(dataObj);
 
 /*
