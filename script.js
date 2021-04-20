@@ -74,7 +74,9 @@ function clearData(obj) {
     obj.val1 = null;
     obj.val2 = null;
     obj.operator = null;
-    obj.result = false;
+    obj.isDisplayingResult = false;
+//    obj.continue = false;
+    obj.isEqualsClicked = false;
     display.textContent = '';
     console.log(obj);
 }
@@ -82,40 +84,93 @@ function clearData(obj) {
 function setNumbers(obj) {
     const numberButtons = document.querySelectorAll('.numbers');
     numberButtons.forEach(button => button.addEventListener('click', function(e) {
+        if (display.textContent === "Error") {
+            return;
+        }
         displayNumber(e, obj);
     }));
 }
 
 function displayNumber(e, obj) {
-    if (obj.result === true && obj.continue !== true) { // clear display if displaying result
+     if (obj.isEqualsClicked === true) { // clear display if displaying result
         clearData(obj); // and clear values from memory
         display.textContent = e.target.id;
         console.log(obj);
         return;
+    } else if (obj.isDisplayingResult) {
+        display.textContent = '';
     }
-    if (obj.continue === true) {
+/*    if (obj.continue === true) {
         display.textContent = e.target.id;
         console.log(obj);
         return;
-    }
+    } */
     if (display.textContent.length < 13) { // permit up to 13 characters on display
         display.textContent += e.target.id;
         console.log(obj);
     }
 }
-
+ 
 function setOperators(obj) {
     const operatorButtons = document.querySelectorAll('.operations');
     operatorButtons.forEach(button => button.addEventListener('click', function(e) {
-        if (display.textContent != '') { // permit click only when value on display
+        if (display.textContent == '' || display.textContent == "Error") { // permit click only when value on display
+            return;
+        } else if (!obj.isEqualsClicked) {
+            if (!obj.val1) {
+                obj.val1 = parseFloat(display.textContent);
+                display.textContent = '';
+                obj.operator = e.target.id;
+                console.log(obj);
+            } else {
+                obj.val2 = parseFloat(display.textContent);
+                display.textContent = parseFloat(operate(obj.operator, obj.val1, obj.val2));
+                obj.operator = e.target.id;
+                obj.isDisplayingResult = true;
+                obj.val2 = null;
+                obj.val1 = parseFloat(display.textContent);
+                console.log(obj);
+            }
+        } else {
+            obj.val1 = parseFloat(display.textContent);
+            display.textContent = '';
+            obj.val2 = null;
+            obj.operator = e.target.id;
+            obj.isEqualsClicked = false;
             console.log(obj);
-            readyOperator(e, obj);
-        }
+        } 
+
+            //we'll always clear the display after operator clicked
+            //and we'll store current value into val1 if not doing consecutive operations
+            //if equals hasn't been clicked yet.
+            //readyOperator(e, obj);
+        
     }));
 }
-
+/*
 function readyOperator(e, obj) {
-    if (obj.val1) {
+    //check to see if doing consectutive operations
+    //we'll test that by seeing if there's already an inputed value,
+    //if there's an inputed operator, and a current value typed in
+    if (obj.val1 !== null && obj.operator !== null && display.textContent != '') {
+        obj.val1 = display.textContent;
+        obj.val2 = null;
+        obj.operator = e.target.id;
+
+    }
+    if (obj.continue === true) {
+        readyOperation(obj);
+        obj.operator = e.target.id;
+        console.log(obj, 125)
+        return;
+    } else if (obj.result === true) {
+        display.textContent = '';
+        obj.operator = e.target.id;
+        obj.result = false;
+        obj.val2 = null;
+        console.log(obj, 132);
+        return;
+    } else if (obj.val1) {
         obj.val2 = parseFloat(display.textContent);
         readyOperation(obj);
         console.log(obj);
@@ -123,37 +178,45 @@ function readyOperator(e, obj) {
         obj.val2 = null;
         obj.continue = true;
         return;
-    } else {
-        obj.val1 = parseFloat(display.textContent);
     }
+    obj.val1 = parseFloat(display.textContent);
     obj.operator = e.target.id;
     display.textContent = null;
     console.log(obj);
 }
-
+*/
 function setEquals(obj) {
     const equals = document.querySelector('#equals');
     equals.addEventListener('click', function() {
-        if (obj.val1 != null && obj.operator != null) { // permit click only when val1 & operator present
-            readyOperation(obj);
-        }
+        if (display.textContent === "Error" || display.textContent == '' || !obj.val2) {
+            return;
+        } //else if (obj.val1 != null && obj.operator != null) { // permit click only when val1 & operator present
+            //obj.hitEquals = true;
+            //readyOperation(obj);
+            //obj.continue = false;
+        //}
     });
 }
-
+/*
 function readyOperation(obj) {
     if (obj.val2 == null) { // grab val2 from disply if there isn't one already stored
     obj.val2 = parseFloat(display.textContent);
     }
     let result = parseFloat(operate(obj.operator, obj.val1, obj.val2)) // why do I sometimes get a string?
+    if (isNaN(result)) {
+        display.textContent = "Error";
+        return;
+    }
     display.textContent = result;
     obj.val1 = result;
     obj.result = true; // true = calculator is displaying result
+    //obj.continue = false;
     console.log(obj);
-}
+} */
 
 setNumbers(dataObj);
 setOperators(dataObj);
-setEquals(dataObj);
+//setEquals(dataObj);
 setClear(dataObj);
 
 /*
