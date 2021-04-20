@@ -60,7 +60,9 @@ function roundFloat(number) {
     }
 }
 
-const dataObj = {};
+const dataObj = {
+    memory: 0,
+};
 const display = document.querySelector('#display-box');
 
 function setClear(obj) {
@@ -75,8 +77,9 @@ function clearData(obj) {
     obj.val2 = null;
     obj.operator = null;
     obj.isDisplayingResult = false;
-//    obj.continue = false;
     obj.isEqualsClicked = false;
+    obj.isDisplayingMemory = false;
+    obj.memory = 0;
     display.textContent = '';
     console.log(obj);
 }
@@ -87,23 +90,33 @@ function setNumbers(obj) {
         if (display.textContent === "Error") {
             return;
         }
+        if (obj.isDisplayingMemory === true) {
+            display.textContent = '';
+            obj.isDisplayingMemory = false;
+        }
         displayNumber(e, obj);
     }));
 
     const decimalButton = document.querySelector('#decimal');
     decimalButton.addEventListener('click', function(e) {
         if (display.textContent.length < 13 && !display.textContent.includes('.')) {
-            if (obj.isEqualsClicked === true) {
-                clearData(obj); // and clear values from memory
-                display.textContent = '.';
-                obj.isEqualsClicked = false;
+            if (obj.isEqualsClicked === true ) {
+                // clear values except memory
+                obj.val1 = null;
+                obj.val2 = null;
+                obj.operator = null;
                 obj.isDisplayingResult = false;
+                obj.isEqualsClicked = false;
+                obj.isDisplayingMemory = false;
+                display.textContent = '';
+                display.textContent = '.';
                 console.log(obj);
                 return;
-            } else if (obj.isDisplayingResult) {
+            } else if (obj.isDisplayingResult || obj.isDisplayingMemory) {
                 display.textContent = '';
                 obj.isEqualsClicked = false;
                 obj.isDisplayingResult = false;
+                obj.isDisplayingMemory = false;
             }
             display.textContent += '.';
         }
@@ -111,8 +124,11 @@ function setNumbers(obj) {
 }
 
 function displayNumber(e, obj) {
-     if (obj.isEqualsClicked === true) { // clear display if displaying result
-        clearData(obj); // and clear values from memory
+    console.log(obj);
+     if (obj.isEqualsClicked === true) { // clear display & cache if displaying result
+        obj.val1 = null;
+        obj.val2 = null;
+        obj.operator = null;
         display.textContent = e.target.id;
         obj.isEqualsClicked = false;
         obj.isDisplayingResult = false;
@@ -122,11 +138,7 @@ function displayNumber(e, obj) {
         display.textContent = '';
         obj.isDisplayingResult = false;
     }
-/*    if (obj.continue === true) {
-        display.textContent = e.target.id;
-        console.log(obj);
-        return;
-    } */
+
     if (display.textContent.length < 13) { // permit up to 13 characters on display
         display.textContent += e.target.id;
         console.log(obj);
@@ -163,6 +175,31 @@ function setOperators(obj) {
             console.log(obj);
         }    
     }));
+}
+
+function setMemory(obj) {
+    const memoryAddButton = document.querySelector('#memory-add');
+    memoryAddButton.addEventListener('click', function() {
+        obj.memory += parseFloat(display.textContent);
+        display.textContent = '';
+    });
+
+    const memorySubtractButton = document.querySelector('#memory-subtract');
+    memorySubtractButton.addEventListener('click', function() {
+        obj.memory -= parseFloat(display.textContent);
+        display.textContent = '';
+    });
+    const memoryRecallButton = document.querySelector('#memory');
+    memoryRecallButton.addEventListener('click', function() {
+        displayMemory(obj);
+    });
+}
+
+function displayMemory(obj) {
+    console.log(obj);
+    display.textContent = obj.memory;
+    obj.isDisplayingResult = false;
+    obj.isDisplayingMemory = true;
 }
 /*
 function readyOperator(e, obj) {
@@ -214,10 +251,6 @@ function setEquals(obj) {
             obj.isDisplayingResult = true;
             obj.val1 = parseFloat(display.textContent);
             console.log(obj);
-            // permit click only when val1 & operator present
-            //obj.hitEquals = true;
-            //readyOperation(obj);
-            //obj.continue = false;
         } else {
             display.textContent = parseFloat(operate(obj.operator, obj.val1, obj.val2));
             obj.val1 = parseFloat(display.textContent);
@@ -246,6 +279,7 @@ setNumbers(dataObj);
 setOperators(dataObj);
 setEquals(dataObj);
 setClear(dataObj);
+setMemory(dataObj);
 
 /*
 function setClear(obj) {
