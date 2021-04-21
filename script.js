@@ -147,13 +147,21 @@ function setOperators(obj) {
                 obj.val1 = parseFloat(display.textContent);
                 display.textContent = '';
                 obj.operator = e.target.id;
+            } else if (obj.isDisplayingResult) {
+                obj.val1 = parseFloat(display.textContent);
+                let result = parseFloat(operate(obj.operator, obj.val1, obj.val2));
+                display.textContent = checkResultLength(result);
+                obj.operator = e.target.id;
+                obj.isDisplayingResult = true;
+                obj.val1 = result;
+                console.log(obj);
             } else {
                 obj.val2 = parseFloat(display.textContent);
                 let result = parseFloat(operate(obj.operator, obj.val1, obj.val2));
                 display.textContent = checkResultLength(result);
                 obj.operator = e.target.id;
                 obj.isDisplayingResult = true;
-                obj.val2 = null;
+                //obj.val2 = null;
                 obj.val1 = result;
             }
         } else {
