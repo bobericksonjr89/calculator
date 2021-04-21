@@ -107,3 +107,15 @@ button:active {
     flex-direction: column;
     margin-left: 2em;
 }
+
+@media only screen and (max-width: 500px) {
+    body {
+        font-size: 10px;
+    }
+}
+
+@media only screen and (max-width: 280px) {
+    body {
+        font-size: 8px;
+    }
+}
