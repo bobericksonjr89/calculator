@@ -36,8 +36,12 @@ function operate(operator, num1, num2) {
             result = null;
             break;
     }
+    return result;
+}
+
+function checkResultLength(result) {
     if (result.toString().length > 13) { //only 13 characters
-        result = roundFloat(result)
+        return roundFloat(result);
     }
     return result;
 }
@@ -52,18 +56,13 @@ function roundFloat(number) {
         if (splitNumbers[0].length > 12) { // 12 bc decimal takes up a character
             return "Error";
         } else {
-            let decimalPlaces = 6 - splitNumbers[0].length;
+            let decimalPlaces = 11 - splitNumbers[0].length;
             console.log(decimalPlaces);
             console.log(number, typeof number)
             return number.toFixed(decimalPlaces);
         }
     }
 }
-
-const dataObj = {
-    memory: 0,
-};
-const display = document.querySelector('#display-box');
 
 function setClear(obj) {
     const clearButton = document.querySelector('#clear');
@@ -112,7 +111,6 @@ function setNumbers(obj) {
                 // clear values except memory
                 clearCache(obj);
                 clearStatus(obj);
-                display.textContent = '';
                 display.textContent = '.';
                 console.log(obj);
                 return;
@@ -157,11 +155,12 @@ function setOperators(obj) {
                 console.log(obj);
             } else {
                 obj.val2 = parseFloat(display.textContent);
-                display.textContent = parseFloat(operate(obj.operator, obj.val1, obj.val2));
+                let result = parseFloat(operate(obj.operator, obj.val1, obj.val2));
+                display.textContent = checkResultLength(result);
                 obj.operator = e.target.id;
                 obj.isDisplayingResult = true;
                 obj.val2 = null;
-                obj.val1 = parseFloat(display.textContent);
+                obj.val1 = result;
                 console.log(obj);
             }
         } else {
@@ -207,24 +206,20 @@ function setEquals(obj) {
             return;
         } else if (!obj.isEqualsClicked) {
             obj.val2 = parseFloat(display.textContent);
-            display.textContent = parseFloat(operate(obj.operator, obj.val1, obj.val2));
+            let result = parseFloat(operate(obj.operator, obj.val1, obj.val2));
+            display.textContent = checkResultLength(result);
             obj.isEqualsClicked = true;
             obj.isDisplayingResult = true;
-            obj.val1 = parseFloat(display.textContent);
+            obj.val1 = result;
             console.log(obj);
         } else {
-            display.textContent = parseFloat(operate(obj.operator, obj.val1, obj.val2));
-            obj.val1 = parseFloat(display.textContent);
+            let result = parseFloat(operate(obj.operator, obj.val1, obj.val2));
+            display.textContent = checkResultLength(result);
+            obj.val1 = result;
             console.log(obj);
         }
     });
 }
-
-setNumbers(dataObj);
-setOperators(dataObj);
-setEquals(dataObj);
-setClear(dataObj);
-setMemory(dataObj);
 
 // keyboard support
 document.addEventListener('keyup', (e) => {
@@ -241,3 +236,15 @@ document.addEventListener('keyup', (e) => {
     }
     document.getElementById(key).click();
 });
+
+const dataObj = {
+    memory: 0,
+};
+const display = document.querySelector('#display-box');
+
+setNumbers(dataObj);
+setOperators(dataObj);
+setEquals(dataObj);
+setClear(dataObj);
+setMemory(dataObj);
+
