@@ -8,7 +8,7 @@ html {
     -ms-user-select: none; /* Internet Explorer/Edge */
     -webkit-touch-callout:none; /* iOS Safari */
 
-    touch-action: manipulation; /* disable zoom on mobile */
+    
   }
   
   *, *:before, *:after {
@@ -19,6 +19,7 @@ html {
     margin: 0;
     padding: 0;
     font-weight: normal;
+    touch-action: manipulation; /* disable zoom on mobile */
   }
   
   ol, ul {
