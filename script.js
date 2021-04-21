@@ -52,11 +52,14 @@ function roundFloat(number) {
         return "Error";
     } else {
         let splitNumbers = numberString.split('.')
+
         if (splitNumbers[0].length > 12) { // 12 bc decimal takes up a character
             return "Error";
         } else {
             let decimalPlaces = 11 - splitNumbers[0].length;
-            return number.toFixed(decimalPlaces);
+            let roundedNumber = number.toFixed(decimalPlaces).toString();
+            let trimmedNumber = roundedNumber.replace(/0+$/,'');
+            return trimmedNumber;
         }
     }
 }
@@ -233,4 +236,3 @@ setOperators(dataObj);
 setEquals(dataObj);
 setClear(dataObj);
 setMemory(dataObj);
-
