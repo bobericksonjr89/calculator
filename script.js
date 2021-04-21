@@ -52,13 +52,10 @@ function roundFloat(number) {
         return "Error";
     } else {
         let splitNumbers = numberString.split('.')
-        console.log(splitNumbers)
         if (splitNumbers[0].length > 12) { // 12 bc decimal takes up a character
             return "Error";
         } else {
             let decimalPlaces = 11 - splitNumbers[0].length;
-            console.log(decimalPlaces);
-            console.log(number, typeof number)
             return number.toFixed(decimalPlaces);
         }
     }
@@ -76,7 +73,6 @@ function clearData(obj) {
     clearCache(obj);
     obj.memory = 0;
     display.textContent = '';
-    console.log(obj);
 }
 
 function clearCache(obj) {
@@ -112,7 +108,6 @@ function setNumbers(obj) {
                 clearCache(obj);
                 clearStatus(obj);
                 display.textContent = '.';
-                console.log(obj);
                 return;
             } else if (obj.isDisplayingResult || obj.isDisplayingMemory) {
                 display.textContent = '';
@@ -124,12 +119,10 @@ function setNumbers(obj) {
 }
 
 function displayNumber(e, obj) {
-    console.log(obj);
      if (obj.isEqualsClicked === true) { // clear display & cache if displaying result
         clearCache(obj);
         display.textContent = e.target.id;
         clearStatus(obj);
-        console.log(obj);
         return;
     } else if (obj.isDisplayingResult) {
         display.textContent = '';
@@ -138,7 +131,6 @@ function displayNumber(e, obj) {
 
     if (display.textContent.length < 13) { // permit up to 13 characters on display
         display.textContent += e.target.id;
-        console.log(obj);
     }
 }
  
@@ -152,7 +144,6 @@ function setOperators(obj) {
                 obj.val1 = parseFloat(display.textContent);
                 display.textContent = '';
                 obj.operator = e.target.id;
-                console.log(obj);
             } else {
                 obj.val2 = parseFloat(display.textContent);
                 let result = parseFloat(operate(obj.operator, obj.val1, obj.val2));
@@ -161,7 +152,6 @@ function setOperators(obj) {
                 obj.isDisplayingResult = true;
                 obj.val2 = null;
                 obj.val1 = result;
-                console.log(obj);
             }
         } else {
             obj.val1 = parseFloat(display.textContent);
@@ -169,7 +159,6 @@ function setOperators(obj) {
             obj.val2 = null;
             obj.operator = e.target.id;
             clearStatus(obj);
-            console.log(obj);
         }    
     }));
 }
@@ -193,7 +182,6 @@ function setMemory(obj) {
 }
 
 function displayMemory(obj) {
-    console.log(obj);
     display.textContent = obj.memory;
     obj.isDisplayingResult = false;
     obj.isDisplayingMemory = true;
@@ -211,12 +199,10 @@ function setEquals(obj) {
             obj.isEqualsClicked = true;
             obj.isDisplayingResult = true;
             obj.val1 = result;
-            console.log(obj);
         } else {
             let result = parseFloat(operate(obj.operator, obj.val1, obj.val2));
             display.textContent = checkResultLength(result);
             obj.val1 = result;
-            console.log(obj);
         }
     });
 }
