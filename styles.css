@@ -73,6 +73,7 @@ h2 {
 }
 
 button {
+    text-align: center;
     padding: 0;
     height: 2em;
     width: 3em;
